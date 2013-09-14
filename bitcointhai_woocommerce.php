@@ -27,6 +27,8 @@ function bitcointhai_woocommerce_gateway_class(){
 			  
 			$this->api = new bitcointhaiAPI;
 			
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+			
 			// Payment listener/API hook
 			add_action( 'woocommerce_api_wc_bitcointhai', array( $this, 'check_ipn_response' ) );
 		}
