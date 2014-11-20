@@ -1,10 +1,10 @@
 === Bitcoin Thai Payment Gateway ===
 Contributors: dave111223
-Donate link: http://bitcoin.in.th/
-Tags: woocommerce, bitcoin, bitcoin.in.th, payment gateway, payment module
+Donate link: https://bitcoin.co.th/
+Tags: woocommerce, bitcoin, bitcoin.co.th, payment gateway, payment module
 Requires at least: 3.0.1
 Tested up to: 3.5.1
-Stable tag: 1.1
+Stable tag: 1.2
 License: AGPLv3.0 or later
 License URI: http://opensource.org/licenses/AGPL-3.0
 
@@ -13,7 +13,7 @@ Woocommerce payment module for use with http://bitcoin.in.th merchant accounts
 == Description ==
 NOTE: You must install the main "WooCommerce - excelling eCommerce" plugin in order to use this plugin
 
-This module allows you to accept Bitcoin payments in Thailand via your http://bitcoin.in.th merchant account
+This module allows you to accept Bitcoin payments in Thailand via your https://bitcoin.co.th merchant account
 
 When users choose the "Bitcoin" payment option at the checkout they will be shown a bitcoin address to send their payment.  Once they have sent the Bitcoin payment they can click "Place Order" to complete the order.
 
@@ -45,6 +45,11 @@ At the moment it is only for Woocommerce, but we plan to add additional eCommerc
 1. Not available
 
 == Changelog ==
+
+= 1.2 =
+* Updated to be compatible with woocommerce version 2.2.8
+* Changed references to bitcoin.in.th to bitcoin.co.th
+* Better theme compatibility
 
 = 1.1 =
 

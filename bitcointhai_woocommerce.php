@@ -8,7 +8,7 @@ function bitcointhai_woocommerce_gateway_class(){
 	class WC_Bitcointhai extends WC_Payment_Gateway{
 		public function __construct(){
 			$this->id = 'bitcointhai';
-			$this->medthod_title = __( 'Bitcoin Thai', 'woocommerce' );
+			$this->medthod_title = __( 'Bitcoin.co.th Thai', 'woocommerce' );
 			$this->has_fields = true;
 			
 			$this->init_form_fields();
@@ -27,17 +27,17 @@ function bitcointhai_woocommerce_gateway_class(){
 			  
 			$this->api = new bitcointhaiAPI;
 			
-			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-			
 			// Payment listener/API hook
 			add_action( 'woocommerce_api_wc_bitcointhai', array( $this, 'check_ipn_response' ) );
+			
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		}
 	   
 	   
 		function admin_options() {
 			?>
-			<h3><?php _e('Bitcoin Thai - Bitcoin.in.th','woocommerce'); ?></h3>
-			<p><?php _e('Accept bitcoin payments with your bitcoin.in.th merchant account', 'woocommerce' ); ?></p>
+			<h3><?php _e('Bitcoin Thai - Bitcoin.co.th','woocommerce'); ?></h3>
+			<p><?php _e('Accept bitcoin payments with your bitcoin.co.th merchant account', 'woocommerce' ); ?></p>
 			<table class="form-table">
 				<?php $this->generate_settings_html(); ?>
 			</table> <?php
@@ -52,13 +52,6 @@ function bitcointhai_woocommerce_gateway_class(){
 		 */
 		function init_form_fields() {
 			global $woocommerce;
-	
-			$shipping_methods = array();
-	
-			if ( is_admin() )
-				foreach ( $woocommerce->shipping->load_shipping_methods() as $method ) {
-					$shipping_methods[ $method->id ] = $method->get_title();
-				}
 	
 			$this->form_fields = array(
 				'enabled' => array(
@@ -77,12 +70,12 @@ function bitcointhai_woocommerce_gateway_class(){
 				'api_id' => array(
 					'title' => __( 'API ID', 'woocommerce' ),
 					'type' => 'text',
-					'description' => __( 'Get your API ID from <a href="http://bitcoin.in.th/merchant-account/" target="_blank">http://bitcoin.in.th/merchant-account/</a>', 'woocommerce' )
+					'description' => __( 'Get your API ID from <a href="https://bitcoin.co.th/merchant-account/" target="_blank">https://bitcoin.co.th/merchant-account/</a>', 'woocommerce' )
 				),
 				'api_key' => array(
 					'title' => __( 'API Key', 'woocommerce' ),
 					'type' => 'text',
-					'description' => __( 'Get your API Key from <a href="http://bitcoin.in.th/merchant-account/" target="_blank">http://bitcoin.in.th/merchant-account/</a>', 'woocommerce' )
+					'description' => __( 'Get your API Key from <a href="https://bitcoin.co.th/merchant-account/" target="_blank">https://bitcoin.co.th/merchant-account/</a>', 'woocommerce' )
 				)
 		   );
 		}
@@ -106,29 +99,30 @@ function bitcointhai_woocommerce_gateway_class(){
 						  'ipn' => $this->notify_url);
 			if(!$paybox = $this->api->paybox($data)){
 				echo '<p class="error">'.__( 'Sorry Bitcoin payments are currently unavailable', 'woocommerce' ).'</p>';
+			}else{
+				$woocommerce->session->bitcoin_order_id = $this->api->order_id;
+				$btc_url = 'bitcoin:'.$paybox->address.'?amount='.$paybox->btc_amount.'&label='.urlencode(get_bloginfo('name'));
+				
+				?>
+				<div>
+					<input type="hidden" name="bitcointhai_order_id" value="<?php echo $paybox->order_id;?>">
+					<div>
+					<p>
+						<strong>Bitcoin Address: </strong><?php echo '<a href="'.$btc_url.'">'.$paybox->address.'</a>';?><br>
+						<strong>Bitcoin Amount: </strong><?php echo $paybox->btc_amount;?> BTC
+					</p>
+					</div>
+					<div style="float:left; margin:10px;">
+						<a href="<?php echo $btc_url;?>"><img src="data:image/png;base64,<?php echo $paybox->qr_data;?>" width="200" height="200" alt="Send to <?php echo $paybox->address;?>" border="0" style="width:200px; height:200px; max-height:200px;"></a>
+					</div>
+					<p><?php echo sprintf(__('You must send <strong>%s</strong> Bitcoins to the address: %s', 'woocommerce'),$paybox->btc_amount,$paybox->address);?></p>
+					<p><?php echo __('After you have completed payment please click the PLACE ORDER button', 'woocommerce');?></p>
+					<?php 
+					echo $this->api->countDown($paybox->expire,'div',__('You must send the bitcoins within the next %s Minutes %s Seconds', 'woocommerce'),__('Bitcoin payment time has expired, please refresh the page to get a new address', 'woocommerce'));
+					?>
+				</div>
+				<?php
 			}
-			$woocommerce->session->bitcoin_order_id = $this->api->order_id;
-			$btc_url = 'bitcoin:'.$paybox->address.'?amount='.$paybox->btc_amount.'&label='.urlencode(get_bloginfo('name'));
-			
-			?>
-            <div>
-                <input type="hidden" name="bitcointhai_order_id" value="<?php echo $paybox->order_id;?>">
-                <div>
-                <p>
-                    <strong>Bitcoin Address: </strong><?php echo '<a href="'.$btc_url.'">'.$paybox->address.'</a>';?><br>
-                    <strong>Bitcoin Amount: </strong><?php echo $paybox->btc_amount;?> BTC
-                </p>
-                </div>
-                <div style="float:left; margin:10px;">
-                    <a href="<?php echo $btc_url;?>"><img src="data:image/png;base64,<?php echo $paybox->qr_data;?>" width="200" alt="Send to <?php echo $paybox->address;?>" border="0"></a>
-                </div>
-                <p><?php echo sprintf(__('You must send <strong>%s</strong> Bitcoins to the address: %s', 'woocommerce'),$paybox->btc_amount,$paybox->address);?></p>
-                <p><?php echo __('After you have completed payment please click the PLACE ORDER button', 'woocommerce');?></p>
-                <?php 
-                echo $this->api->countDown($paybox->expire,'div',__('You must send the bitcoins within the next %s Minutes %s Seconds', 'woocommerce'),__('Bitcoin payment time has expired, please refresh the page to get a new address', 'woocommerce'));
-                ?>
-            </div>
-            <?php
 		}
 		
 		
@@ -164,7 +158,7 @@ function bitcointhai_woocommerce_gateway_class(){
 			// Return thankyou redirect
 			return array(
 				'result' 	=> 'success',
-				'redirect'	=> add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(woocommerce_get_page_id('thanks'))))
+				'redirect'	=> $this->get_return_url( $order )
 			);
 		}
 		
