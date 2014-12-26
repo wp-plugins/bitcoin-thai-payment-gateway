@@ -82,6 +82,9 @@ function bitcointhai_woocommerce_gateway_class(){
 		
 		function is_available() {
 			global $woocommerce;
+			if($this->settings['enabled'] != 'yes'){
+				return false;
+			}
 			if(!$this->api->init($this->api_id, $this->api_key)){
 				return false;
 			}elseif(!$this->api->validate($woocommerce->cart->total,get_woocommerce_currency())){

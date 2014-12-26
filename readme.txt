@@ -4,7 +4,7 @@ Donate link: https://bitcoin.co.th/
 Tags: woocommerce, bitcoin, bitcoin.co.th, payment gateway, payment module
 Requires at least: 3.0.1
 Tested up to: 4.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: AGPLv3.0 or later
 License URI: http://opensource.org/licenses/AGPL-3.0
 
@@ -45,6 +45,9 @@ At the moment it is only for Woocommerce, but we plan to add additional eCommerc
 1. Not available
 
 == Changelog ==
+
+= 1.2.2 =
+* Fixed jquery conflict bugs.
 
 = 1.2.1 =
 * Minor update to better catch API response errors

@@ -62,11 +62,10 @@ class bitcointhaiAPI
 	}
 	
 	public function countDown($expire,$selector, $text = 'You must send the bitcoins within the next %s Minutes %s Seconds',$expiremsg = 'Bitcoin payment time has expired, please refresh the page to get a new address'){
-		return '<p class="bitcoincountdown">'.sprintf($text,'<span id="btcmins">'.$expire.'</span>','<span id="btcsecs">0</span>').'</p><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		return '<p class="bitcoincountdown">'.sprintf($text,'<span id="btcmins">'.$expire.'</span>','<span id="btcsecs">0</span>').'</p>
 		<script>
 			if(typeof bitcointhaitimer == \'undefined\'){
 			var bitcointhaitimer = '.(60*$expire).';
-			jQuery.noConflict();
 			jQuery(function($){
 				function btccountDown(){
 					bitcointhaitimer -= 1;
