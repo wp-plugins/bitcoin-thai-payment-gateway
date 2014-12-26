@@ -97,11 +97,12 @@ function bitcointhai_woocommerce_gateway_class(){
 			$data = array('amount' => $woocommerce->cart->total,
 						  'currency' => get_woocommerce_currency(),
 						  'ipn' => $this->notify_url);
-			if(!$paybox = $this->api->paybox($data)){
+			$paybox = $this->api->paybox($data);
+			if(!$paybox || !is_object($paybox)){
 				echo '<p class="error">'.__( 'Sorry Bitcoin payments are currently unavailable', 'woocommerce' ).'</p>';
 			}else{
 				$woocommerce->session->bitcoin_order_id = $this->api->order_id;
-				$btc_url = 'bitcoin:'.$paybox->address.'?amount='.$paybox->btc_amount.'&label='.urlencode(get_bloginfo('name'));
+				$btc_url = 'bitcoin:'.(string)$paybox->address.'?amount='.$paybox->btc_amount.'&label='.urlencode(get_bloginfo('name'));
 				
 				?>
 				<div>
@@ -120,6 +121,7 @@ function bitcointhai_woocommerce_gateway_class(){
 					<?php 
 					echo $this->api->countDown($paybox->expire,'div',__('You must send the bitcoins within the next %s Minutes %s Seconds', 'woocommerce'),__('Bitcoin payment time has expired, please refresh the page to get a new address', 'woocommerce'));
 					?>
+                    <div style="clear:both;"></div>
 				</div>
 				<?php
 			}
