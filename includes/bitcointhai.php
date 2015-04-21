@@ -99,7 +99,7 @@ class bitcointhaiAPI
 	private function apiFetch($action,$params){
 		if($ch = curl_init ()){
 			curl_setopt ($ch, CURLOPT_URL, $this->api_url.'?action='.$action);
-			curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, true );
+			@curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1 );
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 5 );
 			curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
