@@ -1,11 +1,11 @@
 <?php
 /*
-Bitcoin.in.th API class
+CoinPay.in.th API class
 */
 class bitcointhaiAPI
 {
 	var $access_id, $access_key;
-	var $api_url = 'https://bitcoin.co.th/api/';
+	var $api_url = 'https://coinpay.in.th/api/';
 	var $order_id;
 	var $error;
 	public function init($api_id, $api_key){
@@ -117,7 +117,11 @@ class bitcointhaiAPI
 	}
 	
 	private function authParam(){
-		return array('api_id' => $this->access_id, 'api_key' => $this->access_key);
+		$mt = explode(' ', microtime());
+		$nonce = $mt[1].substr($mt[0], 2, 6);
+		$signature = hash('sha256',$this->access_id.$nonce.$this->access_key);
+		
+		return array('key' => $this->access_id, 'signature' => $signature, 'nonce' => $nonce);
 	}
 }
 ?>

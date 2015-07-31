@@ -5,10 +5,10 @@ function bitcointhai_woocommerce_gateway_class(){
 	
 	include_once('includes/bitcointhai.php');
 	
-	class WC_Bitcointhai extends WC_Payment_Gateway{
+	class WC_CoinPay extends WC_Payment_Gateway{
 		public function __construct(){
-			$this->id = 'bitcointhai';
-			$this->medthod_title = __( 'Bitcoin.co.th Thai', 'woocommerce' );
+			$this->id = 'CoinPay';
+			$this->medthod_title = __( 'CoinPay', 'woocommerce' );
 			$this->has_fields = true;
 			
 			$this->init_form_fields();
@@ -20,7 +20,7 @@ function bitcointhai_woocommerce_gateway_class(){
 			$this->api_id = $this->settings['api_id'];
 			$this->api_key = $this->settings['api_key'];
 			
-			$this->notify_url   = str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Bitcointhai', home_url( '/' ) ) );
+			$this->notify_url   = str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_CoinPay', home_url( '/' ) ) );
 			
 			$this->msg['message'] = "";
 			$this->msg['class'] = "";
@@ -28,7 +28,7 @@ function bitcointhai_woocommerce_gateway_class(){
 			$this->api = new bitcointhaiAPI;
 			
 			// Payment listener/API hook
-			add_action( 'woocommerce_api_wc_bitcointhai', array( $this, 'check_ipn_response' ) );
+			add_action( 'woocommerce_api_wc_coinpay', array( $this, 'check_ipn_response' ) );
 			
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		}
@@ -36,8 +36,8 @@ function bitcointhai_woocommerce_gateway_class(){
 	   
 		function admin_options() {
 			?>
-			<h3><?php _e('Bitcoin Thai - Bitcoin.co.th','woocommerce'); ?></h3>
-			<p><?php _e('Accept bitcoin payments with your bitcoin.co.th merchant account', 'woocommerce' ); ?></p>
+			<h3><?php _e('CoinPay','woocommerce'); ?></h3>
+			<p><?php _e('Accept bitcoin payments with your CoinPay.in.th merchant account', 'woocommerce' ); ?></p>
 			<table class="form-table">
 				<?php $this->generate_settings_html(); ?>
 			</table> <?php
@@ -68,14 +68,14 @@ function bitcointhai_woocommerce_gateway_class(){
 					'desc_tip'      => true,
 				),
 				'api_id' => array(
-					'title' => __( 'API ID', 'woocommerce' ),
-					'type' => 'text',
-					'description' => __( 'Get your API ID from <a href="https://bitcoin.co.th/merchant-account/" target="_blank">https://bitcoin.co.th/merchant-account/</a>', 'woocommerce' )
-				),
-				'api_key' => array(
 					'title' => __( 'API Key', 'woocommerce' ),
 					'type' => 'text',
-					'description' => __( 'Get your API Key from <a href="https://bitcoin.co.th/merchant-account/" target="_blank">https://bitcoin.co.th/merchant-account/</a>', 'woocommerce' )
+					'description' => __( 'Get your API Key from <a href="https://coinpay.in.th/api-access/" target="_blank">https://coinpay.in.th/api-access/</a>', 'woocommerce' )
+				),
+				'api_key' => array(
+					'title' => __( 'API Secret', 'woocommerce' ),
+					'type' => 'text',
+					'description' => __( 'Get your API Secret from <a href="https://coinpay.in.th/api-access/" target="_blank">https://coinpay.in.th/api-access/</a>', 'woocommerce' )
 				)
 		   );
 		}
@@ -86,8 +86,6 @@ function bitcointhai_woocommerce_gateway_class(){
 				return false;
 			}
 			if(!$this->api->init($this->api_id, $this->api_key)){
-				return false;
-			}elseif(!$this->api->validate($woocommerce->cart->total,get_woocommerce_currency())){
 				return false;
 			}
 			return true;
@@ -101,8 +99,8 @@ function bitcointhai_woocommerce_gateway_class(){
 						  'currency' => get_woocommerce_currency(),
 						  'ipn' => $this->notify_url);
 			$paybox = $this->api->paybox($data);
-			if(!$paybox || !is_object($paybox)){
-				echo '<p class="error">'.__( 'Sorry Bitcoin payments are currently unavailable', 'woocommerce' ).'</p>';
+			if(!$paybox || !is_object($paybox) || !$paybox->success){
+				echo '<p class="error">'.__( 'Sorry Bitcoin payments are currently unavailable: '.$paybox->error, 'woocommerce' ).'</p>';
 			}else{
 				$woocommerce->session->bitcoin_order_id = $this->api->order_id;
 				$btc_url = 'bitcoin:'.(string)$paybox->address.'?amount='.$paybox->btc_amount.'&label='.urlencode(get_bloginfo('name'));
@@ -134,7 +132,7 @@ function bitcointhai_woocommerce_gateway_class(){
 		
 		function process_payment ($order_id) {
 			global $woocommerce;
-	
+			
 			$order = new WC_Order( $order_id );
 			
 			$result = $this->api->checkorder($_POST['bitcointhai_order_id'], $order_id);
@@ -147,7 +145,7 @@ function bitcointhai_woocommerce_gateway_class(){
 					  $woocommerce->session->bitcoin_order_id = $result->order_id;
 					}
 				}
-				$woocommerce->add_error(__('Payment error:', 'woothemes'). ' ' . $e);
+				wc_add_notice(__('Payment error:', 'woothemes'). ' ' . $e, 'error');
 				return;
 			}
 	
@@ -159,6 +157,8 @@ function bitcointhai_woocommerce_gateway_class(){
 			
 			// Remove cart
 			$woocommerce->cart->empty_cart();
+			
+			unset($woocommerce->session->bitcoin_order_id);
 	
 			// Return thankyou redirect
 			return array(
@@ -205,7 +205,7 @@ function bitcointhai_woocommerce_gateway_class(){
 	 * Add the Gateway to WooCommerce
 	 **/
 	function woocommerce_add_bitcointhai_gateway($methods) {
-		$methods[] = 'WC_Bitcointhai';
+		$methods[] = 'WC_CoinPay';
 		return $methods;
 	}
 	

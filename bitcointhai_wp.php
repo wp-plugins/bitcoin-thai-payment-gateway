@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Bitcoin.co.th Thai Payment Gateway
-Plugin URI: https://bitcoin.co.th/
-Description: Woocommerce payment module for use with https://bitcoin.co.th merchant accounts
+Plugin Name: CoinPay Thai Payment Gateway
+Plugin URI: https://coinpay.in.th/
+Description: Woocommerce payment module for use with https://coinpay.in.th merchant accounts
 Author: David Barnes
-Version: 1.2.3
-Author URI: https://bitcoin.co.th/
+Version: 2.0
+Author URI: https://coinpay.in.th/
 */
 
 // Only Woocommerce right now
