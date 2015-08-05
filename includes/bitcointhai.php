@@ -106,6 +106,7 @@ class bitcointhaiAPI
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 5 );
 			curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, false);
+			@curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
 			curl_setopt ($ch, CURLOPT_POST, count($params));
 			curl_setopt ($ch, CURLOPT_POSTFIELDS,$params);
 			
@@ -116,7 +117,7 @@ class bitcointhaiAPI
 					$this->error = 'Invalid JSON format: '.$str;
 				}
 			}else{
-				$this->error = curl_error($ch);
+				$this->error = curl_error($ch).'<br>'.print_r(curl_version(),true);
 			}
 			curl_close ( $ch );
 		}else{
