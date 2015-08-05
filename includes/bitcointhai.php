@@ -22,11 +22,8 @@ class bitcointhaiAPI
 		$params['amount'] = $amount;
 		$params['currency'] = $currency;
 		if($data = $this->apiFetch('validate',$params)){
-			$this->error = $data->errors;
+			$this->error = $data->error;
 			return $data->success;
-		}
-		if($this->error == ''){
-			$this->error = 'Could not connect to server (check CURL is installed)';
 		}
 		return false;
 	}
@@ -59,6 +56,7 @@ class bitcointhaiAPI
 		$params['ipn'] = $data['ipn'];
 		$params['order_id'] = (int)$this->order_id;
 		if($data = $this->apiFetch('paybox',$params)){
+			$this->error = $data->error;
 			$this->order_id = $data->order_id;
 			return $data;
 		}
@@ -121,6 +119,8 @@ class bitcointhaiAPI
 				$this->error = curl_error($ch);
 			}
 			curl_close ( $ch );
+		}else{
+			$this->error = 'CURL is not installed';
 		}
 		return false;
 	}

@@ -100,7 +100,7 @@ function bitcointhai_woocommerce_gateway_class(){
 						  'ipn' => $this->notify_url);
 			$paybox = $this->api->paybox($data);
 			if(!$paybox || !is_object($paybox) || !$paybox->success){
-				echo '<p class="error">'.__( 'Sorry Bitcoin payments are currently unavailable: '.$paybox->error, 'woocommerce' ).'</p>';
+				echo '<p class="error">'.__( 'Sorry Bitcoin payments are currently unavailable: ', 'woocommerce' ).($paybox->error != '' ? $paybox->error : $this->api->error).'</p>';
 			}else{
 				$woocommerce->session->bitcoin_order_id = $this->api->order_id;
 				$btc_url = 'bitcoin:'.(string)$paybox->address.'?amount='.$paybox->btc_amount.'&label='.urlencode(get_bloginfo('name'));
