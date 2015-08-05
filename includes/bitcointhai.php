@@ -106,7 +106,8 @@ class bitcointhaiAPI
 			curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 5 );
 			curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, false);
-			@curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+			@curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1);
+			@curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'TLSv1' );
 			curl_setopt ($ch, CURLOPT_POST, count($params));
 			curl_setopt ($ch, CURLOPT_POSTFIELDS,$params);
 			

@@ -47,6 +47,9 @@ At the moment it is only for Woocommerce, but we plan to add additional eCommerc
 1. Not available
 
 == Changelog ==
+= 2.1.4 =
+Use CURL_SSLVERSION_TLSv1 for older systems
+
 = 2.1.3 =
 Ask CURL to use TLSv1_2 due to SSLv3 being disabled on CoinPay for security
 
