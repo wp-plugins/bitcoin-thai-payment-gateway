@@ -118,7 +118,7 @@ class bitcointhaiAPI
 					$this->error = 'Invalid JSON format: '.$str;
 				}
 			}else{
-				$this->error = curl_error($sh);
+				$this->error = curl_error($ch);
 			}
 			curl_close ( $ch );
 		}
