@@ -25,6 +25,10 @@ class bitcointhaiAPI
 			$this->error = $data->errors;
 			return $data->success;
 		}
+		if($this->error == ''){
+			$this->error = 'Could not connect to server (check CURL is installed)';
+		}
+		return false;
 	}
 	
 	public function checkorder($order_id, $reference_id=''){
@@ -107,11 +111,16 @@ class bitcointhaiAPI
 			curl_setopt ($ch, CURLOPT_POST, count($params));
 			curl_setopt ($ch, CURLOPT_POSTFIELDS,$params);
 			
-			$str = curl_exec ( $ch );
-			curl_close ( $ch );
-			if($data = json_decode($str)){
-				return $data;
+			if($str = curl_exec ( $ch )){
+				if($data = json_decode($str)){
+					return $data;
+				}else{
+					$this->error = 'Invalid JSON format: '.$str;
+				}
+			}else{
+				$this->error = curl_error($sh);
 			}
+			curl_close ( $ch );
 		}
 		return false;
 	}

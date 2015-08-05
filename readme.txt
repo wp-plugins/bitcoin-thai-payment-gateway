@@ -4,7 +4,7 @@ Donate link: https://coinpay.in.th/
 Tags: woocommerce, bitcoin, coinpay, bitcoin.co.th, payment gateway, payment module
 Requires at least: 3.0.1
 Tested up to: 4.2.2
-Stable tag: 2.0
+Stable tag: 2.1
 License: AGPLv3.0 or later
 License URI: http://opensource.org/licenses/AGPL-3.0
 
@@ -47,6 +47,9 @@ At the moment it is only for Woocommerce, but we plan to add additional eCommerc
 1. Not available
 
 == Changelog ==
+
+= 2.1 =
+Added more debugging information
 
 = 2.0 =
 Rebranded merchant service as CoinPay
